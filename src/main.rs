@@ -13,10 +13,12 @@ use crate::{
     d02_gift_shop::{
         find_invalid_ids_of_ranges, is_repeating_sequence, is_sequence_twice, read_ranges,
     },
+    d03_lobby::{find_joltage_in_battery_packs, find_max_joltage, read_battery_packs},
 };
 
 mod d01_a_password;
 mod d02_gift_shop;
+mod d03_lobby;
 
 #[derive(Copy, Clone, Debug, ValueEnum)]
 enum ProblemPart {
@@ -68,6 +70,23 @@ fn day_two(part: &ProblemPart) -> anyhow::Result<()> {
     Ok(())
 }
 
+fn day_three(part: &ProblemPart) -> anyhow::Result<()> {
+    let packs = read_battery_packs(Path::new("./data/day-3/long.txt"));
+
+    let value = match part {
+        ProblemPart::One => {
+            find_joltage_in_battery_packs(&packs, |batteries| find_max_joltage(batteries, 2))
+        }
+        ProblemPart::Two => {
+            find_joltage_in_battery_packs(&packs, |batteries| find_max_joltage(batteries, 12))
+        }
+    };
+
+    println!("And joltage is.... {}", value);
+
+    Ok(())
+}
+
 fn now() -> u128 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -86,6 +105,7 @@ fn main() -> anyhow::Result<()> {
         }
         1 => day_one(&args.part),
         2 => day_two(&args.part),
+        3 => day_three(&args.part),
         _ => bail!("I'm working on it... heheheh"),
     };
 

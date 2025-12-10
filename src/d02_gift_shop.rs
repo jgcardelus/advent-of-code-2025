@@ -149,6 +149,7 @@ mod test {
         is_sequence_twice,
     };
 
+    #[test]
     fn test_find_invalid_ids_part_one() {
         let ranges = vec![
             (Range { start: 11, end: 12 }, 11),
