@@ -14,11 +14,15 @@ use crate::{
         find_invalid_ids_of_ranges, is_repeating_sequence, is_sequence_twice, read_ranges,
     },
     d03_lobby::{find_joltage_in_battery_packs, find_max_joltage, read_battery_packs},
+    d04_printing::{get_accessable_rolls, get_accessable_rolls_with_removal, read_rolls},
+    d05_ingredients::{find_valid_ids, get_total_fresh, read_ids},
 };
 
 mod d01_a_password;
 mod d02_gift_shop;
 mod d03_lobby;
+mod d04_printing;
+mod d05_ingredients;
 
 #[derive(Copy, Clone, Debug, ValueEnum)]
 enum ProblemPart {
@@ -87,6 +91,34 @@ fn day_three(part: &ProblemPart) -> anyhow::Result<()> {
     Ok(())
 }
 
+fn day_four(part: &ProblemPart) -> anyhow::Result<()> {
+    let mut grid = read_rolls(Path::new("./data/day-4/long.txt"));
+
+    let value = match part {
+        ProblemPart::One => {
+            get_accessable_rolls::<fn(&mut Vec<Vec<_>>, usize, usize)>(&mut grid, None)
+        }
+        ProblemPart::Two => get_accessable_rolls_with_removal(&mut grid),
+    };
+
+    println!("Can move {} rolls", value);
+
+    Ok(())
+}
+
+fn day_five(part: &ProblemPart) -> anyhow::Result<()> {
+    let (ranges, ids) = read_ids(Path::new("./data/day-5/long.txt"));
+
+    let value = match part {
+        ProblemPart::One => find_valid_ids(ids, &ranges),
+        ProblemPart::Two => get_total_fresh(&ranges),
+    };
+
+    println!("Fresh ingredients: {}, ...", value);
+
+    Ok(())
+}
+
 fn now() -> u128 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -106,6 +138,8 @@ fn main() -> anyhow::Result<()> {
         1 => day_one(&args.part),
         2 => day_two(&args.part),
         3 => day_three(&args.part),
+        4 => day_four(&args.part),
+        5 => day_five(&args.part),
         _ => bail!("I'm working on it... heheheh"),
     };
 
